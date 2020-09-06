@@ -65,9 +65,9 @@ public class Map : MonoBehaviour
     public int[] PlaceUnitAtRandomPos(GameObject reference)
     {
         List<int[]> validCoordinates = new List<int[]>();
-        for (int row = 1; row < rows; row++)
+        for (int row = 1; row < rows - 1; row++)
         {
-            for (int col = 1; col < cols; col++)
+            for (int col = 1; col < cols - 1; col++)
             {
                 if (!IsObjectAtPos(row, col))
                 {

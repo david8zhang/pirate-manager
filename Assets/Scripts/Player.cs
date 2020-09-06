@@ -11,6 +11,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     Canvas canvas;
 
+    [SerializeField]
+    PlayerShipInfo playerShipInfo;
+
     List<Ship> ships = new List<Ship>();
 
     public void Start()
@@ -45,6 +48,6 @@ public class Player : MonoBehaviour
 
     void SelectShip(Ship ship)
     {
-        Debug.Log("Clicked: " + ship.name);
+        playerShipInfo.ShowInfo(ship);
     }
 }
