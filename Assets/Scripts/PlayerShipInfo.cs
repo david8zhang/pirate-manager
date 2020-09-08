@@ -21,8 +21,16 @@ public class PlayerShipInfo : MonoBehaviour
     [SerializeField]
     Text healthText;
 
+    [SerializeField]
+    Button raidButton;
+
+    Ship selectedShip;
+
     public void ShowInfo(Ship ship)
     {
+        selectedShip = ship;
+
+        // Populate the UI with ship's information
         image.sprite = ship.shipClass.sprite;
         shipNameText.text = ship.name;
         shipClassNameText.text = ship.shipClass.shipClassName;
@@ -31,8 +39,18 @@ public class PlayerShipInfo : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    public Ship GetSelectedShip()
+    {
+        return selectedShip;
+    }
+
     public void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    public void Start()
+    {
+        raidButton.onClick.AddListener(() => GameManager.instance.player.SelectRaidTarget());
     }
 }

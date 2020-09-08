@@ -14,7 +14,7 @@ public class Map : MonoBehaviour
     public int rows = 9;
     public int cols = 16;
 
-    internal Dictionary<string, GameObject> objMap = new Dictionary<string, GameObject>();
+    List<GameObject> objectsOnMap = new List<GameObject>();
 
 
     // Start is called before the first frame update
@@ -37,15 +37,15 @@ public class Map : MonoBehaviour
         {
             for (int col = 0; col < cols; col++)
             {
-                GenerateTile(row, col);
+                SpawnUnit(row, col, tilePrefab);
 
             }
         }
     }
 
-    internal void GenerateTile(int row, int col)
+    public void MoveObject(GameObject obj, int[] newPos)
     {
-        GameObject tile = SpawnUnit(row, col, tilePrefab);
+        PlaceUnit(newPos[0], newPos[1], obj);
     }
 
     public void PlaceUnit(int row, int col, GameObject reference)
@@ -53,13 +53,24 @@ public class Map : MonoBehaviour
         float posX = col * tileSize;
         float posY = row * -tileSize;
         reference.transform.position = new Vector2(posX, posY);
-        objMap.Add(row + ", " + col, reference);
+        if (!objectsOnMap.Contains(reference))
+        {
+            objectsOnMap.Add(reference);
+        }
     }
 
     public bool IsObjectAtPos(int row, int col)
     {
-        string key = row + ", " + col;
-        return objMap.ContainsKey(key);
+        foreach (GameObject obj in objectsOnMap)
+        {
+            float posX = col * tileSize;
+            float posY = row * -tileSize;
+            if (obj.transform.position.x == posX && obj.transform.position.y == posY)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int[] PlaceUnitAtRandomPos(GameObject reference)
@@ -88,5 +99,15 @@ public class Map : MonoBehaviour
         float posY = row * -tileSize;
         newObj.transform.position = new Vector2(posX, posY);
         return newObj;
+    }
+
+    public static int GetDistanceBetweenPoints(int[] pointA, int[] pointB)
+    {
+        return Mathf.Abs(pointA[0] - pointB[0]) + Mathf.Abs(pointA[1] - pointB[1]);
+    }
+
+    public bool CheckWithinBounds(int[] pos)
+    {
+        return pos[0] >= 0 && pos[0] < rows && pos[1] >= 0 && pos[1] < cols;
     }
 }

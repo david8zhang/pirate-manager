@@ -12,8 +12,10 @@ public class GameManager : MonoBehaviour
 
     public Map map;
     public Player player;
+    public RaidSpawner raidSpawner;
 
     private int currHour = 0;
+    private float interval = 1f;
     private bool isGoing;
 
     public void Awake()
@@ -50,7 +52,7 @@ public class GameManager : MonoBehaviour
     {
         while (isGoing)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(interval);
             currHour = (currHour + 1) % 24;
             FormatCurrentTime();
             OnClockTick();
@@ -64,12 +66,6 @@ public class GameManager : MonoBehaviour
 
     void OnClockTick()
     {
-        Debug.Log("Did some map updates - curr time: " + currHour);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        player.MoveRaidingShips();
     }
 }

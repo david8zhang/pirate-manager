@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Ship Class", menuName = "Ship Class")]

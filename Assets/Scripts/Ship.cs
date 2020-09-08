@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using System;
 
 public class Ship : MonoBehaviour, IPointerClickHandler
 {
@@ -37,5 +35,38 @@ public class Ship : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         onClickFn(this);
+    }
+
+    public int[] GetCoordinateTowardsDest(int[] dest)
+    {
+        int[][] directions = new int[][]
+        {
+            new int[] { 0, 1 },
+            new int[] { 0, -1 },
+            new int[] { -1, 0 },
+            new int[] { 1, 0 }
+        };
+        int[] closestPoint = new int[0];
+        int closestDistance = Int32.MaxValue;
+        foreach (int[] dir in directions)
+        {
+            int newPosX = gridPos[0] + dir[0];
+            int newPosY = gridPos[1] + dir[1];
+            int[] newPos = new int[] { newPosX, newPosY };
+            if (newPos[0] == dest[0] && newPos[1] == dest[1])
+            {
+                return newPos;
+            }
+            if (GameManager.instance.map.CheckWithinBounds(newPos) && !GameManager.instance.map.IsObjectAtPos(newPosX, newPosY))
+            {
+                int distance = Map.GetDistanceBetweenPoints(newPos, dest);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPoint = newPos;
+                }
+            }
+        }
+        return closestPoint;
     }
 }
