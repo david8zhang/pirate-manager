@@ -48,6 +48,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void Pause()
+    {
+        isGoing = false;
+        Text pauseButtonText = pauseButton.GetComponentInChildren<Text>();
+        pauseButtonText.text = "Play";
+        StopAllCoroutines();
+    }
+
     public IEnumerator UpdateClock()
     {
         while (isGoing)
