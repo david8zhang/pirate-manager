@@ -14,13 +14,19 @@ public class Player : MonoBehaviour
     [SerializeField]
     RaidUI raidUI;
 
+    [SerializeField]
+    SuccessfulRaidResult successfulRaidResult;
+
+    [SerializeField]
+    FailedRaidResult failedRaidResult;
+
     List<Ship> ships = new List<Ship>();
-    List<RaidingShip> raidingShips = new List<RaidingShip>();
+    List<Raid> raidingShips = new List<Raid>();
     Stack<RaidOutcome> raidOutcomes = new Stack<RaidOutcome>();
     public Ship shipToRaidWith;
     public bool isRaiding = false;
 
-    public struct RaidingShip
+    public struct Raid
     {
         public Ship raider;
         public Ship target;
@@ -32,11 +38,12 @@ public class Player : MonoBehaviour
     public struct RaidOutcome
     {
         public int goldAmount;
-        public Ship capturedShip;
-        public Ship lostShip;
-        public RaidOutcomeStatus status;
+        public bool isCaptured;
+        public bool isLost;
         public int damageTaken;
         public int crewLost;
+        public RaidOutcomeStatus status;
+        public Raid raid;
     }
 
     public void Start()
@@ -78,9 +85,9 @@ public class Player : MonoBehaviour
 
     public bool IsShipInRaid(string name)
     {
-        foreach (RaidingShip s in raidingShips)
+        foreach (Raid r in raidingShips)
         {
-            if (s.raider.name == name || s.target.name == name)
+            if (r.raider.name == name || r.target.name == name)
             {
                 return true;
             }
@@ -98,7 +105,7 @@ public class Player : MonoBehaviour
 
     public void StartRaid(Ship shipToRaid, RaidSpawner.RaidInfo raidInfo)
     {
-        raidingShips.Add(new RaidingShip {
+        raidingShips.Add(new Raid {
             raider = shipToRaidWith,
             target = shipToRaid,
             raidInfo = raidInfo
@@ -106,78 +113,107 @@ public class Player : MonoBehaviour
         CloseRaidTargetSelect();
     }
 
-    void MoveRaidingShip(RaidingShip s)
+    void MoveRaidingShip(Raid r)
     {
-        Ship raider = s.raider;
-        Ship target = s.target;
+        Ship raider = r.raider;
+        Ship target = r.target;
         int[] newGridPos = raider.GetCoordinateTowardsDest(target.gridPos);
         GameManager.instance.map.MoveObject(raider.gameObject, newGridPos);
         raider.SetGridPos(newGridPos);
     }
 
-    bool isRaidingShipAtDest(RaidingShip s)
+    bool isRaidingShipAtDest(Raid r)
     {
-        Ship raider = s.raider;
-        Ship target = s.target;
+        Ship raider = r.raider;
+        Ship target = r.target;
         return raider.gridPos[0] == target.gridPos[0] && raider.gridPos[1] == target.gridPos[1];
     }
 
     public void MoveRaidingShips()
     {
-        foreach (RaidingShip s in raidingShips)
+        List<int> indicesToRemove = new List<int>();
+        for (int i = 0; i < raidingShips.Count; i++)
         {
-            if (isRaidingShipAtDest(s))
+            Raid r = raidingShips[i];
+            if (isRaidingShipAtDest(r))
             {
-                ProcessRaidOutcome(s);
+                indicesToRemove.Add(i);
+                ProcessRaidOutcome(r);
             } else
             {
-                MoveRaidingShip(s);
+                MoveRaidingShip(r);
             }
         }
+        // Remove all raids that have completed
+        foreach (int i in indicesToRemove)
+        {
+            raidingShips.RemoveAt(i);
+        }
+
         if (raidOutcomes.Count > 0)
         {
-            ShowRaidOutcome();
+            ShowNextRaidOutcome();
         }
     }
 
-    void ProcessRaidOutcome(RaidingShip s)
+    void ProcessRaidOutcome(Raid r)
     {
-        RaidSpawner.RaidInfo raidInfo = s.raidInfo;
+        RaidSpawner.RaidInfo raidInfo = r.raidInfo;
         float successRate = raidInfo.successRate;
         float successNum = Random.Range(1f, 100f);
         RaidOutcome raidOutcome = new RaidOutcome();
         if (successNum <= successRate)
         {
+            raidOutcome.status = RaidOutcomeStatus.Success;
             raidOutcome.goldAmount = raidInfo.goldAmount;
             float capturedNum = Random.Range(1f, 100f);
             float captureRate = raidInfo.captureChance;
             if (capturedNum <= captureRate)
             {
-                raidOutcome.capturedShip = s.target;
+                raidOutcome.isCaptured = true;
             }
         } else
         {
+            raidOutcome.status = RaidOutcomeStatus.Failure;
             float lossRate = Random.Range(1f, 100f);
             if (lossRate <= 10)
             {
-                raidOutcome.lostShip = s.raider;
+                raidOutcome.isLost = true;
             }
         }
-        raidOutcome.damageTaken = CalculateDamageTaken(s, successNum <= successRate);
-        raidOutcome.crewLost = CalculateCrewLost(s, successNum <= successRate);
+        raidOutcome.damageTaken = CalculateDamageTaken(r, successNum <= successRate);
+        raidOutcome.crewLost = CalculateCrewLost(r, successNum <= successRate);
+        raidOutcome.raid = r;
         raidOutcomes.Push(raidOutcome);
     }
 
-    void ShowRaidOutcome()
+    public void ShowNextRaidOutcome()
     {
-        GameManager.instance.Pause();
-        RaidOutcome raidOutcome = raidOutcomes.Pop();
+        if (GameManager.instance.IsTimeMoving())
+        {
+            GameManager.instance.Pause();
+        }
+        if (raidOutcomes.Count > 0)
+        {
+            RaidOutcome raidOutcome = raidOutcomes.Pop();
+            if (raidOutcome.status == RaidOutcomeStatus.Success)
+            {
+                successfulRaidResult.ShowRaidOutcome(raidOutcome);
+            }
+            else
+            {
+                failedRaidResult.ShowRaidOutcome(raidOutcome);
+            }
+        } else
+        {
+            GameManager.instance.Play();
+        }
     }
 
 
-    int CalculateCrewLost(RaidingShip s, bool isWin)
+    int CalculateCrewLost(Raid r, bool isWin)
     {
-        float percentCrewLost = 0.0f;
+        float percentCrewLost;
         if (isWin)
         {
             percentCrewLost = Random.Range(0f, 0.2f);
@@ -186,12 +222,12 @@ public class Player : MonoBehaviour
         {
             percentCrewLost = Random.Range(0.5f, 1f);
         }
-        return Mathf.RoundToInt(s.raider.currCrewCapacity * percentCrewLost);
+        return Mathf.RoundToInt(r.raider.currCrewCapacity * percentCrewLost);
     }
 
-    int CalculateDamageTaken(RaidingShip s, bool isWin)
+    int CalculateDamageTaken(Raid r, bool isWin)
     {
-        float percentHealth = 0.0f;
+        float percentHealth;
         if (isWin)
         {
             percentHealth = Random.Range(0f, 0.1f);
@@ -200,7 +236,7 @@ public class Player : MonoBehaviour
         {
             percentHealth = Random.Range(0.5f, 1f);
         }
-        return Mathf.RoundToInt(s.raider.currHealth * percentHealth);
+        return Mathf.RoundToInt(r.raider.currHealth * percentHealth);
     }
 
     public void CloseRaidTargetSelect()

@@ -168,6 +168,8 @@ MonoBehaviour:
     type: 3}
   playerShipInfo: {fileID: 1995188621}
   raidUI: {fileID: 334356909}
+  successfulRaidResult: {fileID: 2013854284}
+  failedRaidResult: {fileID: 4287812248481799224}
   shipToRaidWith: {fileID: 0}
   isRaiding: 0
 --- !u!1 &94058656
@@ -4839,6 +4841,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78d67c691bbc64cb89a5b7b27391e506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shipNameText: {fileID: 1120960037}
+  crewCap: {fileID: 848108768}
+  healthText: {fileID: 1254785932}
+  earnedGoldAmount: {fileID: 1842681313}
+  nextButton: {fileID: 361413785}
+  shipCaptureOrLoss: {fileID: 219179135287115352}
 --- !u!1 &2065104735
 GameObject:
   m_ObjectHideFlags: 0
@@ -5234,6 +5242,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f114a541d524043f29df6d0a793ded26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shipName: {fileID: 219179135173376570}
+  shipClass: {fileID: 862830987}
+  titleLabel: {fileID: 219179135022104032}
+  nextButton: {fileID: 219179135899367558}
 --- !u!222 &219179135592034548
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5831,7 +5843,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4287812248481799221
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5907,6 +5919,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4258e2615e620468ea31eddf85fb23dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shipNameText: {fileID: 4287812248049227865}
+  crewCap: {fileID: 4287812249396345500}
+  healthText: {fileID: 4287812248183891440}
+  nextButton: {fileID: 4287812248842394341}
+  shipCaptureOrLoss: {fileID: 219179135287115352}
 --- !u!1 &4287812248736846484
 GameObject:
   m_ObjectHideFlags: 0

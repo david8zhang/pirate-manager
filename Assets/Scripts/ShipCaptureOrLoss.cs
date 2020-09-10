@@ -1,18 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShipCaptureOrLoss : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] Text shipName;
+    [SerializeField] Text shipClass;
+    [SerializeField] Text titleLabel;
+    [SerializeField] Button nextButton;
+
+    public void ShowCapturedShip(Ship ship)
     {
-        
+        shipName.text = ship.name;
+        shipClass.text = ship.shipClass.shipClassName;
+        titleLabel.text = "You captured a ship!";
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ShowLostShip(Ship ship)
     {
-        
+        shipName.text = ship.name;
+        shipClass.text = ship.shipClass.shipClassName;
+        titleLabel.text = "You lost a ship...";
+    }
+
+    public void Start()
+    {
+        nextButton.onClick.AddListener(() => GameManager.instance.player.ShowNextRaidOutcome());
     }
 }
