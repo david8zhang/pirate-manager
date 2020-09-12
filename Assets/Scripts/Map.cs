@@ -38,7 +38,6 @@ public class Map : MonoBehaviour
             for (int col = 0; col < cols; col++)
             {
                 SpawnUnit(row, col, tilePrefab);
-
             }
         }
     }
@@ -46,6 +45,15 @@ public class Map : MonoBehaviour
     public void MoveObject(GameObject obj, int[] newPos)
     {
         PlaceUnit(newPos[0], newPos[1], obj);
+    }
+
+    public void RemoveObj(GameObject reference)
+    {
+        if (objectsOnMap.Contains(reference))
+        {
+            objectsOnMap.Remove(reference);
+            Destroy(reference);
+        }
     }
 
     public void PlaceUnit(int row, int col, GameObject reference)

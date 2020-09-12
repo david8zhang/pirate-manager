@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
 
     void OnClockTick()
     {
-        player.MoveRaidingShips();
+        player.Tick();
+        raidSpawner.Tick();
     }
 }

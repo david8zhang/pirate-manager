@@ -15,6 +15,7 @@ public class ShipCaptureOrLoss : MonoBehaviour
         shipName.text = ship.name;
         shipClass.text = ship.shipClass.shipClassName;
         titleLabel.text = "You captured a ship!";
+        gameObject.SetActive(true);
     }
 
     public void ShowLostShip(Ship ship)
@@ -22,10 +23,17 @@ public class ShipCaptureOrLoss : MonoBehaviour
         shipName.text = ship.name;
         shipClass.text = ship.shipClass.shipClassName;
         titleLabel.text = "You lost a ship...";
+        gameObject.SetActive(true);
     }
 
     public void Start()
     {
-        nextButton.onClick.AddListener(() => GameManager.instance.player.ShowNextRaidOutcome());
+        nextButton.onClick.AddListener(() => OnNextClick());
+    }
+
+    public void OnNextClick()
+    {
+        gameObject.SetActive(false);
+        GameManager.instance.player.ShowNextRaidOutcome();
     }
 }

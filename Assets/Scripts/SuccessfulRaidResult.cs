@@ -33,6 +33,7 @@ public class SuccessfulRaidResult : MonoBehaviour
         {
             GameManager.instance.player.ShowNextRaidOutcome();
         }
+        nextButton.onClick.RemoveAllListeners();
         gameObject.SetActive(false);
     }
 }

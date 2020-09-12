@@ -14,8 +14,8 @@ public class FailedRaidResult : MonoBehaviour
     {
         Ship raider = raidOutcome.raid.raider;
         shipNameText.text = raider.name;
-        crewCap.text = (raider.currCrewCapacity - raidOutcome.crewLost).ToString() + "(-" + raidOutcome.crewLost + ")";
-        healthText.text = (raider.currHealth - raidOutcome.damageTaken).ToString() + "(-" + raidOutcome.damageTaken + ")";
+        crewCap.text = raider.currCrewCapacity.ToString() + "(-" + raidOutcome.crewLost + ")";
+        healthText.text = raider.currHealth.ToString() + "(-" + raidOutcome.damageTaken + ")";
         gameObject.SetActive(true);
 
         nextButton.onClick.AddListener(() => GoToNext(raidOutcome));
@@ -24,7 +24,7 @@ public class FailedRaidResult : MonoBehaviour
     public void GoToNext(Player.RaidOutcome raidOutcome)
     {
         Ship target = raidOutcome.raid.target;
-        if (raidOutcome.isCaptured)
+        if (raidOutcome.isLost)
         {
             shipCaptureOrLoss.ShowCapturedShip(target);
         }

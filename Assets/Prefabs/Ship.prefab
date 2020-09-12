@@ -100,6 +100,7 @@ MonoBehaviour:
   currCrewCapacity: 0
   shipClass: {fileID: 0}
   gridPos: 
+  spriteRenderer: {fileID: 2571824650661956785}
 --- !u!61 &2895309024310480877
 BoxCollider2D:
   m_ObjectHideFlags: 0

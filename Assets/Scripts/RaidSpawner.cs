@@ -46,6 +46,40 @@ public class RaidSpawner : MonoBehaviour
         PlaceShips();
     }
 
+    public void LoseRaidableShip(Ship s)
+    {
+        int indexToRemove = -1;
+        for (int i = 0; i < raidableShips.Count; i++)
+        {
+            if (raidableShips[i].name == s.name)
+            {
+                indexToRemove = i;
+            }
+        }
+        nameToGoldMapping.Remove(s.name);
+        raidableShips.RemoveAt(indexToRemove);
+    }
+
+    public void Tick()
+    {
+        ReplaceLostShips();
+    }
+
+    public void ReplaceLostShips()
+    {
+        int diff = numRaidable - raidableShips.Count;
+        if (diff > 0)
+        {
+            for (int i = 0; i < diff; i++)
+            {
+                Ship ship = CreateNewShip("Ship " + Random.Range(0, 1000));
+                raidableShips.Add(ship);
+                nameToGoldMapping[ship.name] = GetGoldAmount(ship);
+                ship.MoveToRandPos();
+            }
+        }
+    }
+
     Ship CreateNewShip(string name)
     {
         Ship starter = Instantiate(shipPrefab, transform.position, Quaternion.identity).GetComponent<Ship>();
@@ -145,8 +179,7 @@ public class RaidSpawner : MonoBehaviour
     {
         foreach (Ship s in raidableShips)
         {
-            int[] randCoord = GameManager.instance.map.PlaceUnitAtRandomPos(s.gameObject);
-            s.gridPos = randCoord;
+            s.MoveToRandPos();
         }
     }
 }

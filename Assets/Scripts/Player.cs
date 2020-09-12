@@ -1,30 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    GameObject shipPrefab;
-
-    [SerializeField]
-    PlayerShipInfo playerShipInfo;
-
-    [SerializeField]
-    RaidUI raidUI;
-
-    [SerializeField]
-    SuccessfulRaidResult successfulRaidResult;
-
-    [SerializeField]
-    FailedRaidResult failedRaidResult;
+    [SerializeField] GameObject shipPrefab;
+    [SerializeField] PlayerShipInfo playerShipInfo;
+    [SerializeField] RaidUI raidUI;
+    [SerializeField] SuccessfulRaidResult successfulRaidResult;
+    [SerializeField] FailedRaidResult failedRaidResult;
 
     List<Ship> ships = new List<Ship>();
     List<Raid> raidingShips = new List<Raid>();
     Stack<RaidOutcome> raidOutcomes = new Stack<RaidOutcome>();
+
     public Ship shipToRaidWith;
     public bool isRaiding = false;
+
+    int totalGold = 0;
 
     public struct Raid
     {
@@ -129,7 +121,103 @@ public class Player : MonoBehaviour
         return raider.gridPos[0] == target.gridPos[0] && raider.gridPos[1] == target.gridPos[1];
     }
 
-    public void MoveRaidingShips()
+    public void Tick()
+    {
+        List<int> finishedRaids = MoveRaidingShips();
+        ClearFinishedRaids(finishedRaids);
+        ProcessRaidOutcomes();
+        if (raidOutcomes.Count > 0)
+        {
+            ShowNextRaidOutcome();
+        }
+    }
+
+    public void ClearFinishedRaids(List<int> indicesToRemove)
+    {
+        // Remove all raids that have completed
+        foreach (int i in indicesToRemove)
+        {
+            raidingShips.RemoveAt(i);
+        }
+    }
+
+    public void ProcessRaidOutcomes()
+    {
+        foreach (RaidOutcome raidOutcome in raidOutcomes)
+        {
+            Ship s = raidOutcome.raid.raider;
+            Ship target = raidOutcome.raid.target;
+            if (raidOutcome.status == RaidOutcomeStatus.Success)
+            {
+                totalGold += raidOutcome.goldAmount;
+                if (raidOutcome.isCaptured)
+                {
+                    // Remove enemy ship
+                    CaptureShip(target);
+                } else
+                {
+                    SinkShip(target);
+                }
+            } else
+            {
+                if (raidOutcome.isLost)
+                {
+                    LoseShip(s);
+                }
+                else
+                {
+                    MoveShipToAdjacent(s);
+                }
+            }
+            s.LoseCrew(raidOutcome.crewLost);
+            s.TakeDamage(raidOutcome.damageTaken);
+        }
+    }
+
+    public void SinkShip(Ship s)
+    {
+        GameManager gm = GameManager.instance;
+        gm.map.RemoveObj(s.gameObject);
+        gm.raidSpawner.LoseRaidableShip(s);
+    }
+
+    public void MoveShipToAdjacent(Ship s)
+    {
+        int[] adjPos = s.FindEmptyAdjacentPosition();
+        s.MoveToPos(adjPos);
+    }
+
+    public void LoseShip(Ship lostShip)
+    {
+        int indexToRemove = 0;
+        for (int i = 0; i < ships.Count; i++)
+        {
+            if (ships[i].name == lostShip.name)
+            {
+                indexToRemove = i;
+            }
+        }
+        ships.RemoveAt(indexToRemove);
+        GameManager.instance.map.RemoveObj(lostShip.gameObject);
+    }
+
+    public void CaptureShip(Ship capturedShip)
+    {
+        GameManager.instance.raidSpawner.LoseRaidableShip(capturedShip);
+        ships.Add(capturedShip);
+        int[] adjPos = capturedShip.FindEmptyAdjacentPosition();
+        if (adjPos != null)
+        {
+            capturedShip.MoveToPos(adjPos);
+        } else
+        {
+            capturedShip.MoveToRandPos();
+        }
+        capturedShip.SetClickHandler(SelectShip);
+        capturedShip.SetColor(new Color32(255, 255, 255, 255));
+    }
+
+    public List<int> MoveRaidingShips()
     {
         List<int> indicesToRemove = new List<int>();
         for (int i = 0; i < raidingShips.Count; i++)
@@ -138,25 +226,16 @@ public class Player : MonoBehaviour
             if (isRaidingShipAtDest(r))
             {
                 indicesToRemove.Add(i);
-                ProcessRaidOutcome(r);
+                GenerateRaidOutcome(r);
             } else
             {
                 MoveRaidingShip(r);
             }
         }
-        // Remove all raids that have completed
-        foreach (int i in indicesToRemove)
-        {
-            raidingShips.RemoveAt(i);
-        }
-
-        if (raidOutcomes.Count > 0)
-        {
-            ShowNextRaidOutcome();
-        }
+        return indicesToRemove;
     }
 
-    void ProcessRaidOutcome(Raid r)
+    void GenerateRaidOutcome(Raid r)
     {
         RaidSpawner.RaidInfo raidInfo = r.raidInfo;
         float successRate = raidInfo.successRate;
@@ -209,7 +288,6 @@ public class Player : MonoBehaviour
             GameManager.instance.Play();
         }
     }
-
 
     int CalculateCrewLost(Raid r, bool isWin)
     {
