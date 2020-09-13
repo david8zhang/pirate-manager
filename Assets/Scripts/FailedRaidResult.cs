@@ -26,12 +26,13 @@ public class FailedRaidResult : MonoBehaviour
         Ship target = raidOutcome.raid.target;
         if (raidOutcome.isLost)
         {
-            shipCaptureOrLoss.ShowCapturedShip(target);
+            shipCaptureOrLoss.ShowLostShip(target);
         }
         else
         {
             GameManager.instance.player.ShowNextRaidOutcome();
         }
+        nextButton.onClick.RemoveAllListeners();
         gameObject.SetActive(false);
     }
 

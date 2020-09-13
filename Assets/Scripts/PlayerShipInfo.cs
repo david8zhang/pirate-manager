@@ -44,6 +44,12 @@ public class PlayerShipInfo : MonoBehaviour
         return selectedShip;
     }
 
+    public void BackToOverworld()
+    {
+        Hide();
+        GameManager.instance.player.BackToOverworld();
+    }
+
     public void Hide()
     {
         gameObject.SetActive(false);

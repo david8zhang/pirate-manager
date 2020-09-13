@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -37,7 +36,7 @@ public class Map : MonoBehaviour
         {
             for (int col = 0; col < cols; col++)
             {
-                SpawnUnit(row, col, tilePrefab);
+                GameObject tileObj = SpawnUnit(row, col, tilePrefab);
             }
         }
     }
@@ -117,5 +116,10 @@ public class Map : MonoBehaviour
     public bool CheckWithinBounds(int[] pos)
     {
         return pos[0] >= 0 && pos[0] < rows && pos[1] >= 0 && pos[1] < cols;
+    }
+
+    public bool IsPositionAtEdge(int[] pos)
+    {
+        return pos[0] == 0 || pos[0] == rows - 1 || pos[1] == 0 || pos[1] == cols - 1;
     }
 }

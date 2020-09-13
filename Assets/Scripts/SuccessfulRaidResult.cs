@@ -16,8 +16,8 @@ public class SuccessfulRaidResult : MonoBehaviour
     {
         Ship raider = raidOutcome.raid.raider;
         shipNameText.text = raider.name;
-        crewCap.text = (raider.currCrewCapacity - raidOutcome.crewLost).ToString() + "(-" + raidOutcome.crewLost + ")";
-        healthText.text = (raider.currHealth - raidOutcome.damageTaken).ToString() + "(-" + raidOutcome.damageTaken + ")";
+        crewCap.text = raider.currCrewCapacity.ToString() + "(-" + raidOutcome.crewLost + ")";
+        healthText.text = raider.currHealth.ToString() + "(-" + raidOutcome.damageTaken + ")";
         earnedGoldAmount.text = "+" + raidOutcome.goldAmount;
         nextButton.onClick.AddListener(() => GoToNext(raidOutcome));
         gameObject.SetActive(true);

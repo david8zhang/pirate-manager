@@ -5,7 +5,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] GameObject shipPrefab;
     [SerializeField] PlayerShipInfo playerShipInfo;
-    [SerializeField] RaidUI raidUI;
+    [SerializeField] PlayerUI playerUI;
     [SerializeField] SuccessfulRaidResult successfulRaidResult;
     [SerializeField] FailedRaidResult failedRaidResult;
 
@@ -71,8 +71,14 @@ public class Player : MonoBehaviour
     {
         if (!isRaiding && !IsShipInRaid(ship.name))
         {
+            playerUI.Hide();
             playerShipInfo.ShowInfo(ship);
         }
+    }
+
+    public void BackToOverworld()
+    {
+        playerUI.Show();
     }
 
     public bool IsShipInRaid(string name)
@@ -89,7 +95,8 @@ public class Player : MonoBehaviour
 
     public void SelectRaidTarget()
     {
-        raidUI.Show();
+        playerUI.Show();
+        playerUI.ShowCancelRaid();
         isRaiding = true;
         shipToRaidWith = playerShipInfo.GetSelectedShip();
         playerShipInfo.Hide();
@@ -123,21 +130,23 @@ public class Player : MonoBehaviour
 
     public void Tick()
     {
-        List<int> finishedRaids = MoveRaidingShips();
+        List<Raid> finishedRaids = MoveRaidingShips();
         ClearFinishedRaids(finishedRaids);
-        ProcessRaidOutcomes();
+
         if (raidOutcomes.Count > 0)
         {
+            ProcessRaidOutcomes();
             ShowNextRaidOutcome();
+            playerUI.SetTotalGoldAmount(totalGold);
         }
+
     }
 
-    public void ClearFinishedRaids(List<int> indicesToRemove)
+    public void ClearFinishedRaids(List<Raid> finishedRaids)
     {
-        // Remove all raids that have completed
-        foreach (int i in indicesToRemove)
+        foreach (Raid r in finishedRaids)
         {
-            raidingShips.RemoveAt(i);
+            raidingShips.Remove(r);
         }
     }
 
@@ -217,22 +226,22 @@ public class Player : MonoBehaviour
         capturedShip.SetColor(new Color32(255, 255, 255, 255));
     }
 
-    public List<int> MoveRaidingShips()
+    public List<Raid> MoveRaidingShips()
     {
-        List<int> indicesToRemove = new List<int>();
+        List<Raid> finishedRaids = new List<Raid>();
         for (int i = 0; i < raidingShips.Count; i++)
         {
             Raid r = raidingShips[i];
             if (isRaidingShipAtDest(r))
             {
-                indicesToRemove.Add(i);
+                finishedRaids.Add(r);
                 GenerateRaidOutcome(r);
             } else
             {
                 MoveRaidingShip(r);
             }
         }
-        return indicesToRemove;
+        return finishedRaids;
     }
 
     void GenerateRaidOutcome(Raid r)
@@ -319,7 +328,7 @@ public class Player : MonoBehaviour
 
     public void CloseRaidTargetSelect()
     {
-        raidUI.Hide();
+        playerUI.HideCancelRaid();
         isRaiding = false;
         shipToRaidWith = null;
     }
