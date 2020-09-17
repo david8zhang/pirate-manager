@@ -8,4 +8,6 @@ public class ShipClass : ScriptableObject
     public Sprite sprite;
     public int defaultMaxHealth;
     public int defaultCrewCapacity;
+    public int crewHireCost;
+    public int upgradeCost;
 }

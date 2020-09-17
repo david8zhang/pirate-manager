@@ -17,6 +17,7 @@ public class PlayerUI : MonoBehaviour
     public void Start()
     {
         cancelRaidButton.onClick.AddListener(() => CancelRaid());
+        showShipsButton.onClick.AddListener(() => OnShowShipsClick());
     }
 
     public void Hide()
@@ -55,5 +56,17 @@ public class PlayerUI : MonoBehaviour
 
     public void OnShowShipsClick()
     {
+        showShipsButton.onClick.RemoveAllListeners();
+        showShipsButton.GetComponentInChildren<Text>().text = "Overworld";
+        showShipsButton.onClick.AddListener(() => OnBackToOverworld());
+        GameManager.instance.player.OnShowShipsClick();
+    }
+
+    public void OnBackToOverworld()
+    {
+        showShipsButton.onClick.RemoveAllListeners();
+        showShipsButton.GetComponentInChildren<Text>().text = "My Ships";
+        showShipsButton.onClick.AddListener(() => OnShowShipsClick());
+        GameManager.instance.player.OnHideShipsClick();
     }
 }

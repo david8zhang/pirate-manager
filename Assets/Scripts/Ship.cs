@@ -15,7 +15,9 @@ public class Ship : MonoBehaviour, IPointerClickHandler
 
     public delegate void ClickDelegate(Ship ship);
     public ClickDelegate onClickFn;
+    public bool isRepairing = false;
 
+    readonly int baseRepairRate = 10;
     int[][] directions = new int[][]
     {
         new int[] { 0, 1 },
@@ -127,5 +129,24 @@ public class Ship : MonoBehaviour, IPointerClickHandler
             }
         }
         return closestPoint;
+    }
+
+    int GetRepairRate()
+    {
+        return baseRepairRate * (currCrewCapacity + 1);
+    }
+
+    public void Repair()
+    {
+        int repairRate = GetRepairRate();
+        currHealth += repairRate;
+        currHealth = Math.Min(currHealth, shipClass.defaultMaxHealth);
+    }
+
+    public int GetRepairDuration()
+    {
+        int repairRate = GetRepairRate();
+        int healthDiff = shipClass.defaultMaxHealth - currHealth;
+        return Mathf.CeilToInt(healthDiff / repairRate);
     }
 }

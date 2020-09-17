@@ -16,3 +16,5 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: f8c18c4d1ed0946118931437d544551c, type: 3}
   defaultMaxHealth: 50
   defaultCrewCapacity: 5
+  crewHireCost: 50
+  upgradeCost: 1000

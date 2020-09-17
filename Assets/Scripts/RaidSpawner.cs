@@ -146,33 +146,33 @@ public class RaidSpawner : MonoBehaviour
         return crewPercentage + classPercentage;
     }
 
-    float CalculateTotalSuccessPercentage(Ship raider, Ship target)
+    int CalculateTotalSuccessPercentage(Ship raider, Ship target)
     {
         return CalculatePercentageBasedOnCrew(raider, target) + CalculatePercentageBasedOnShipClass(raider, target) + CalculatePercentageBasedOnHealth(raider, target);
     }
 
-    float CalculatePercentageBasedOnShipClass(Ship raider, Ship target)
+    int CalculatePercentageBasedOnShipClass(Ship raider, Ship target)
     {
 
         int raiderClass = numberToShipClassMap[raider.shipClass.shipClassName];
         int targetClass = numberToShipClassMap[target.shipClass.shipClassName];
         int classDiff = targetClass - raiderClass;
-        return 20 - (6.667f * classDiff);
+        return Mathf.RoundToInt(20 - (6.667f * classDiff));
 
     }
 
-    float CalculatePercentageBasedOnHealth(Ship raider, Ship target)
+    int CalculatePercentageBasedOnHealth(Ship raider, Ship target)
     {
         int raiderHealth = raider.currHealth;
         int targetHealth = target.currHealth;
         int healthDiff = targetHealth - raiderHealth;
-        return 15 - (0.3f * healthDiff);
+        return Mathf.RoundToInt(32.5f - (0.325f * healthDiff));
     }
 
-    float CalculatePercentageBasedOnCrew(Ship raider, Ship target)
+    int CalculatePercentageBasedOnCrew(Ship raider, Ship target)
     {
         int crewDiff = target.currCrewCapacity - raider.currCrewCapacity;
-        return 15 - (2.5f * crewDiff);
+        return Mathf.RoundToInt(5 - (0.833f * crewDiff));
     }
 
     void PlaceShips()

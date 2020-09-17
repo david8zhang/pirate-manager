@@ -5,6 +5,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] GameObject shipPrefab;
     [SerializeField] PlayerShipInfo playerShipInfo;
+    [SerializeField] ShipInfoList shipInfoList;
     [SerializeField] PlayerUI playerUI;
     [SerializeField] SuccessfulRaidResult successfulRaidResult;
     [SerializeField] FailedRaidResult failedRaidResult;
@@ -67,9 +68,31 @@ public class Player : MonoBehaviour
         }
     }
 
+    public bool HireCrew(Ship s)
+    {
+        if (totalGold >= s.shipClass.crewHireCost && s.currCrewCapacity < s.shipClass.defaultCrewCapacity)
+        {
+            totalGold -= s.shipClass.crewHireCost;
+            s.currCrewCapacity += 1;
+            playerUI.SetTotalGoldAmount(totalGold);
+            return true;
+        }
+        return false;
+    }
+
+    public void OnShowShipsClick()
+    {
+        shipInfoList.ShowShipInfo();
+    }
+
+    public void OnHideShipsClick()
+    {
+        shipInfoList.Hide();
+    }
+
     void SelectShip(Ship ship)
     {
-        if (!isRaiding && !IsShipInRaid(ship.name))
+        if (CanRaid(ship))
         {
             playerUI.Hide();
             playerShipInfo.ShowInfo(ship);
@@ -79,6 +102,11 @@ public class Player : MonoBehaviour
     public void BackToOverworld()
     {
         playerUI.Show();
+    }
+
+    public bool CanRaid(Ship ship)
+    {
+        return !IsShipInRaid(ship.name) && !isRaiding && !ship.isRepairing;
     }
 
     public bool IsShipInRaid(string name)
@@ -91,6 +119,11 @@ public class Player : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public List<Ship> GetCurrShips()
+    {
+        return ships;
     }
 
     public void SelectRaidTarget()
@@ -140,6 +173,24 @@ public class Player : MonoBehaviour
             playerUI.SetTotalGoldAmount(totalGold);
         }
 
+        ProcessRepairs();
+    }
+
+    public void ProcessRepairs()
+    {
+        foreach (Ship s in ships)
+        {
+            if (s.isRepairing)
+            {
+                s.Repair();
+                playerShipInfo.UpdateHealth();
+                if (s.currHealth == s.shipClass.defaultMaxHealth)
+                {
+                    playerShipInfo.FinishedRepairing();
+                    s.isRepairing = false;
+                }
+            }
+        }
     }
 
     public void ClearFinishedRaids(List<Raid> finishedRaids)
@@ -296,6 +347,16 @@ public class Player : MonoBehaviour
         {
             GameManager.instance.Play();
         }
+    }
+
+    public void RepairShip(Ship s)
+    {
+        s.isRepairing = true;
+    }
+
+    public int GetRepairDuration(Ship s)
+    {
+        return s.GetRepairDuration();
     }
 
     int CalculateCrewLost(Raid r, bool isWin)
