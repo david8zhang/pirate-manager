@@ -18,3 +18,4 @@ MonoBehaviour:
   defaultCrewCapacity: 15
   crewHireCost: 200
   upgradeCost: 5000
+  nextShipClassName: ManOWar

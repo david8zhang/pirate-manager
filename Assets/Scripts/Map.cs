@@ -36,7 +36,7 @@ public class Map : MonoBehaviour
         {
             for (int col = 0; col < cols; col++)
             {
-                GameObject tileObj = SpawnUnit(row, col, tilePrefab);
+                SpawnUnit(row, col, tilePrefab);
             }
         }
     }

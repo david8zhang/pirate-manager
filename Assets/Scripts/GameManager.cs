@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public RaidSpawner raidSpawner;
 
     private int currHour = 0;
-    private float interval = 2f;
+    private float interval = 0.5f;
     private bool isGoing;
 
     public void Awake()

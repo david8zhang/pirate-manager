@@ -17,12 +17,30 @@ public class ShipInfoList : MonoBehaviour
 
     public void ShowShipInfo()
     {
+        FillShipInfo();
+        ConfigureButtons();
+        gameObject.SetActive(true);
+    }
+
+    Ship GetCurrentShip()
+    {
         List<Ship> ships = GameManager.instance.player.GetCurrShips();
         Ship currShip = ships[currShipIndex];
-        shipNameLabel.text = currShip.name;
-        shipClassLabel.text = currShip.shipClass.shipClassName;
-        numCrew.text = currShip.currCrewCapacity + "/" + currShip.shipClass.defaultCrewCapacity;
-        currHealth.text = currShip.currHealth + "/" + currShip.shipClass.defaultMaxHealth;
+        return currShip;
+    }
+
+    void ConfigureButtons()
+    {
+        Ship currShip = GetCurrentShip();
+        hireCrewButton.GetComponentInChildren<Text>().text = "Hire Crew (" + currShip.shipClass.crewHireCost + ")";
+        if (currShip.shipClass.shipClassName == "Man O War")
+        {
+            upgradeButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            upgradeButton.GetComponentInChildren<Text>().text = "Upgrade (" + currShip.shipClass.upgradeCost + ")";
+        }
 
         // Remove old listeners
         hireCrewButton.onClick.RemoveAllListeners();
@@ -30,25 +48,34 @@ public class ShipInfoList : MonoBehaviour
         nextShipButton.onClick.RemoveAllListeners();
 
         // Attach listeners
-        hireCrewButton.GetComponentInChildren<Text>().text = "Hire Crew (" + currShip.shipClass.crewHireCost + ")";
         hireCrewButton.onClick.AddListener(() => HireCrew());
-        if (currShip.shipClass.shipClassName == "Man O War")
-        {
-            upgradeButton.gameObject.SetActive(false);
-        }else
-        {
-            upgradeButton.GetComponentInChildren<Text>().text = "Upgrade (" + currShip.shipClass.upgradeCost + ")";
-        }
+        upgradeButton.onClick.AddListener(() => Upgrade());
         nextShipButton.onClick.AddListener(() => ShowNextShip());
+    }
 
+    void FillShipInfo()
+    {
+        Ship currShip = GetCurrentShip();
+        shipNameLabel.text = currShip.name;
+        shipClassLabel.text = currShip.shipClass.shipClassName;
+        numCrew.text = currShip.currCrewCapacity + "/" + currShip.shipClass.defaultCrewCapacity;
+        currHealth.text = currShip.currHealth + "/" + currShip.shipClass.defaultMaxHealth;
+    }
 
-        gameObject.SetActive(true);
+    public void Upgrade()
+    {
+        Ship ship = GetCurrentShip();
+        bool didUpgrade = GameManager.instance.player.UpgradeShip(ship);
+        if (didUpgrade)
+        {
+            ConfigureButtons();
+            FillShipInfo();
+        }
     }
 
     public void HireCrew()
     {
-        List<Ship> ships = GameManager.instance.player.GetCurrShips();
-        Ship currShip = ships[currShipIndex];
+        Ship currShip = GetCurrentShip();
         bool result = GameManager.instance.player.HireCrew(currShip);
         if (result)
         {

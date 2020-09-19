@@ -18,3 +18,4 @@ MonoBehaviour:
   defaultCrewCapacity: 10
   crewHireCost: 100
   upgradeCost: 2000
+  nextShipClassName: Galleon

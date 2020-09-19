@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     List<Ship> ships = new List<Ship>();
     List<Raid> raidingShips = new List<Raid>();
     Stack<RaidOutcome> raidOutcomes = new Stack<RaidOutcome>();
+    Pathfinding pathfinder;
 
     public Ship shipToRaidWith;
     public bool isRaiding = false;
@@ -43,6 +44,7 @@ public class Player : MonoBehaviour
     {
         GetOrInitShips();
         PlaceShips();
+        pathfinder = new Pathfinding(GameManager.instance.map);
     }
 
     void GetOrInitShips()
@@ -149,7 +151,8 @@ public class Player : MonoBehaviour
     {
         Ship raider = r.raider;
         Ship target = r.target;
-        int[] newGridPos = raider.GetCoordinateTowardsDest(target.gridPos);
+        List<int[]> path = pathfinder.AStarSearch(raider.gridPos, target.gridPos);
+        int[] newGridPos = path[1];
         GameManager.instance.map.MoveObject(raider.gameObject, newGridPos);
         raider.SetGridPos(newGridPos);
     }
@@ -172,7 +175,7 @@ public class Player : MonoBehaviour
             ShowNextRaidOutcome();
             playerUI.SetTotalGoldAmount(totalGold);
         }
-
+        pathfinder.UpdateMap(GameManager.instance.map);
         ProcessRepairs();
     }
 
@@ -259,6 +262,18 @@ public class Player : MonoBehaviour
         }
         ships.RemoveAt(indexToRemove);
         GameManager.instance.map.RemoveObj(lostShip.gameObject);
+    }
+
+    public bool UpgradeShip(Ship ship)
+    {
+        if (totalGold >= ship.shipClass.upgradeCost)
+        {
+            totalGold -= ship.shipClass.upgradeCost;
+            ship.shipClass = ShipCatalog.instance.GetNextShipClass(ship.shipClass);
+            playerUI.SetTotalGoldAmount(totalGold);
+            return true;
+        }
+        return false;
     }
 
     public void CaptureShip(Ship capturedShip)

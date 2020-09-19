@@ -15,4 +15,11 @@ public class ShipCatalog : MonoBehaviour
     {
         return (ShipClass)Resources.Load("ShipClasses/" + className);
     }
+
+    public ShipClass GetNextShipClass(ShipClass shipClass)
+    {
+        string nextShipClassName = shipClass.nextShipClassName;
+        ShipClass nextShipClass = GetShipClassForName(nextShipClassName);
+        return nextShipClass;
+    }
 }

@@ -18,3 +18,4 @@ MonoBehaviour:
   defaultCrewCapacity: 5
   crewHireCost: 50
   upgradeCost: 1000
+  nextShipClassName: Caravel

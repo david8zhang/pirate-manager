@@ -10,4 +10,5 @@ public class ShipClass : ScriptableObject
     public int defaultCrewCapacity;
     public int crewHireCost;
     public int upgradeCost;
+    public string nextShipClassName;
 }
