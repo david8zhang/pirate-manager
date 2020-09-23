@@ -35,6 +35,12 @@ public class Ship : MonoBehaviour, IPointerClickHandler
         GetComponent<SpriteRenderer>().sprite = shipClass.sprite;
     }
 
+    public void Upgrade()
+    {
+        shipClass = ShipCatalog.instance.GetShipClassForName(shipClass.nextShipClassName);
+        GetComponent<SpriteRenderer>().sprite = shipClass.sprite;
+    }
+
     public void SetColor(Color32 color)
     {
         spriteRenderer.color = color;
@@ -147,6 +153,6 @@ public class Ship : MonoBehaviour, IPointerClickHandler
     {
         int repairRate = GetRepairRate();
         int healthDiff = shipClass.defaultMaxHealth - currHealth;
-        return Mathf.CeilToInt(healthDiff / repairRate);
+        return Mathf.CeilToInt(healthDiff / repairRate) + 1;
     }
 }

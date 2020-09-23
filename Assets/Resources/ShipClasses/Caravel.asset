@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Caravel
   m_EditorClassIdentifier: 
   shipClassName: Caravel
-  sprite: {fileID: 21300000, guid: f8c18c4d1ed0946118931437d544551c, type: 3}
+  sprite: {fileID: 21300000, guid: e6ed937c01f0b4978ad2526c9aaba0be, type: 3}
   defaultMaxHealth: 100
   defaultCrewCapacity: 10
   crewHireCost: 100

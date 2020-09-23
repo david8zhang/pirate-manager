@@ -3,32 +3,16 @@ using UnityEngine.UI;
 
 public class PreRaidInfoPanel : MonoBehaviour
 {
-    [SerializeField]
-    Text shipName;
-
-    [SerializeField]
-    Text shipClassName;
-
-    [SerializeField]
-    Text duration;
-
-    [SerializeField]
-    Text goldAmount;
-
-    [SerializeField]
-    Text successRate;
-
-    [SerializeField]
-    Text captureRate;
-
-    [SerializeField]
-    Text numCrew;
-
-    [SerializeField]
-    Text healthText;
-
-    [SerializeField]
-    Button raid;
+    [SerializeField] Text shipName;
+    [SerializeField] Text shipClassName;
+    [SerializeField] Text duration;
+    [SerializeField] Text goldAmount;
+    [SerializeField] Text successRate;
+    [SerializeField] Text captureRate;
+    [SerializeField] Text numCrew;
+    [SerializeField] Text healthText;
+    [SerializeField] Button raid;
+    [SerializeField] Image shipImage;
 
     Ship shipToRaid;
     RaidSpawner.RaidInfo raidInfo;
@@ -40,6 +24,7 @@ public class PreRaidInfoPanel : MonoBehaviour
 
     public void SetShipInfo(Ship s)
     {
+        shipImage.sprite = s.shipClass.sprite;
         shipToRaid = s;
         shipName.text = s.name;
         shipClassName.text = s.shipClass.shipClassName;

@@ -269,7 +269,7 @@ public class Player : MonoBehaviour
         if (totalGold >= ship.shipClass.upgradeCost)
         {
             totalGold -= ship.shipClass.upgradeCost;
-            ship.shipClass = ShipCatalog.instance.GetNextShipClass(ship.shipClass);
+            ship.Upgrade();
             playerUI.SetTotalGoldAmount(totalGold);
             return true;
         }

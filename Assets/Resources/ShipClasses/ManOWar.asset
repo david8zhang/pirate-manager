@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: ManOWar
   m_EditorClassIdentifier: 
   shipClassName: Man O War
-  sprite: {fileID: 21300000, guid: f8c18c4d1ed0946118931437d544551c, type: 3}
+  sprite: {fileID: 21300000, guid: 1d862afb3c5ec4afd9653266be28e036, type: 3}
   defaultMaxHealth: 200
   defaultCrewCapacity: 20
   crewHireCost: 300
   upgradeCost: 0
+  nextShipClassName: 

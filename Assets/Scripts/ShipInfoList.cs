@@ -12,6 +12,7 @@ public class ShipInfoList : MonoBehaviour
     [SerializeField] Button hireCrewButton;
     [SerializeField] Button upgradeButton;
     [SerializeField] Button nextShipButton;
+    [SerializeField] Image shipImage;
 
     int currShipIndex = 0;
 
@@ -56,6 +57,7 @@ public class ShipInfoList : MonoBehaviour
     void FillShipInfo()
     {
         Ship currShip = GetCurrentShip();
+        shipImage.sprite = currShip.shipClass.sprite;
         shipNameLabel.text = currShip.name;
         shipClassLabel.text = currShip.shipClass.shipClassName;
         numCrew.text = currShip.currCrewCapacity + "/" + currShip.shipClass.defaultCrewCapacity;
