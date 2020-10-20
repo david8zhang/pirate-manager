@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Galleon
   m_EditorClassIdentifier: 
   shipClassName: Galleon
-  sprite: {fileID: 21300000, guid: 1d862afb3c5ec4afd9653266be28e036, type: 3}
+  sprite: {fileID: 21300000, guid: 4054bb7b0b442456d8764b22478d7ea8, type: 3}
   defaultMaxHealth: 150
   defaultCrewCapacity: 15
   crewHireCost: 200
-  upgradeCost: 5000
-  nextShipClassName: ManOWar
+  upgradeCost: 0
+  nextShipClassName: 

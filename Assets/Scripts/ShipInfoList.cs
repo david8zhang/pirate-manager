@@ -13,6 +13,7 @@ public class ShipInfoList : MonoBehaviour
     [SerializeField] Button upgradeButton;
     [SerializeField] Button nextShipButton;
     [SerializeField] Image shipImage;
+    [SerializeField] Text fullyUpgradedText;
 
     int currShipIndex = 0;
 
@@ -34,9 +35,10 @@ public class ShipInfoList : MonoBehaviour
     {
         Ship currShip = GetCurrentShip();
         hireCrewButton.GetComponentInChildren<Text>().text = "Hire Crew (" + currShip.shipClass.crewHireCost + ")";
-        if (currShip.shipClass.shipClassName == "Man O War")
+        if (currShip.shipClass.shipClassName == "Galleon")
         {
             upgradeButton.gameObject.SetActive(false);
+            fullyUpgradedText.gameObject.SetActive(true);
         }
         else
         {
